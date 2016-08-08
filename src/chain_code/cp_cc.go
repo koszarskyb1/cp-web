@@ -84,6 +84,7 @@ type CP struct {
 	Qty       int     `json:"qty"`
 	Discount  float64 `json:"discount"`
 	Maturity  int     `json:"maturity"`
+	MaturDate string  `json:"maturDate`
 	Owners    []Owner `json:"owner"`
 	Issuer    string  `json:"issuer"`
 	IssueDate string  `json:"issueDate"`
@@ -305,7 +306,11 @@ func (t *SimpleChaincode) issueCommercialPaper(stub *shim.ChaincodeStub, args []
 
 	fmt.Println("Marshalling CP bytes")
 	cp.CUSIP = account.Prefix + suffix
+
+	matTime, err := msToTime(cp.IssueDate)
 	
+	cp.MaturDate = matTime.AddDate(0, 0, (cp.Maturity)).String()
+
 	fmt.Println("Getting State on CP " + cp.CUSIP)
 	cpRxBytes, err := stub.GetState(cpPrefix+cp.CUSIP)
 	if cpRxBytes == nil {
@@ -656,6 +661,63 @@ func (t *SimpleChaincode) transferPaper(stub *shim.ChaincodeStub, args []string)
 		return nil, errors.New("Error writing the cp back")
 	}
 	
+	fmt.Println("Successfully completed Invoke")
+	return nil, nil
+}
+
+
+func (t *SimpleChaincode) maturePapers(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
+
+	if len(args) != 1 {
+		return nil, errors.New("Incorrect number of arguments. Expecting commercial paper record")
+	}
+	
+	// Get list of all the keys
+	keysBytes, err := stub.GetState("PaperKeys")
+	if err != nil {
+		fmt.Println("Error retrieving paper keys")
+		return nil, errors.New("Error retrieving paper keys")
+	}
+	var keys []string
+	err = json.Unmarshal(keysBytes, &keys)
+	if err != nil {
+		fmt.Println("Error unmarshalling paper keys")
+		return nil, errors.New("Error unmarshalling paper keys")
+	}
+	
+	// Get all the cps
+	for _, value := range keys {
+		cpBytes, err := stub.GetState(value)
+		
+		var cp CP
+		
+		err = json.Unmarshal(cpBytes, &cp)
+		if err != nil {
+			fmt.Println("Error retrieving cp " + value)
+			return nil, errors.New("Error retrieving cp " + value)
+		}
+
+		t, err := msToTime(cp.MaturDate)
+
+		passed := time.Since(t).Hours()		
+		cp.Maturity = -(int)(passed)/24
+			
+	// Write everything back
+	// cp
+	cpBytesToWrite, err := json.Marshal(&cp)
+	if err != nil {
+		fmt.Println("Error marshalling the cp")
+		return nil, errors.New("Error marshalling the cp")
+	}
+	fmt.Println("Put state on CP")
+	err = stub.PutState(cpPrefix+cp.CUSIP, cpBytesToWrite)
+	if err != nil {
+		fmt.Println("Error writing the cp back")
+		return nil, errors.New("Error writing the cp back")
+	}
+
+	}
+
 	fmt.Println("Successfully completed Invoke")
 	return nil, nil
 }
