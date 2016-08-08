@@ -700,7 +700,7 @@ func (t *SimpleChaincode) maturePapers(stub *shim.ChaincodeStub, args []string) 
 		t, err := msToTime(cp.MaturDate)
 
 		passed := time.Since(t).Hours()		
-		cp.Maturity = -(int)(passed)/24
+		cp.Maturity -= (int)(passed)/24
 			
 	// Write everything back
 	// cp
@@ -806,7 +806,10 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
     } else if function == "init" {
         fmt.Println("Firing init")
         return t.init(stub, args)
-    }
+    } else if function == "maturePapers" {
+		fmt.Println("Firing maturePapers")
+		return t.maturePapers(stub, args)
+	}
 
 	return nil, errors.New("Received unknown function invocation")
 }
