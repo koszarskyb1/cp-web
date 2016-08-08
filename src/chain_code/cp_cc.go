@@ -700,7 +700,7 @@ func (t *SimpleChaincode) maturePapers(stub *shim.ChaincodeStub, args []string) 
 		t, err := msToTime(cp.MaturDate)
 
 		passed := time.Since(t).Hours()		
-		cp.Maturity -= (int)(passed)/24
+		cp.Maturity -= ((int)(passed)/12)
 			
 	// Write everything back
 	// cp
