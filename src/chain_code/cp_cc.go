@@ -565,7 +565,14 @@ func (t *SimpleChaincode) transferPaper(stub *shim.ChaincodeStub, args []string)
 			quantity = owner.Quantity
 		}
 	}
+
+	//update maturity
 	
+			t, err := msToTime(cp.MaturDate)
+
+		remains := t.Sub(time.Now()).Hours()		
+		cp.Maturity = ((int)(remains)/12)
+
 	// If fromCompany doesn't own this paper
 	if ownerFound == false {
 		fmt.Println("The company " + tr.FromCompany + "doesn't own any of this paper")
@@ -665,7 +672,7 @@ func (t *SimpleChaincode) transferPaper(stub *shim.ChaincodeStub, args []string)
 	return nil, nil
 }
 
-
+/*
 func (t *SimpleChaincode) maturePapers(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
 
 	if len(args) != 1 {
@@ -701,6 +708,7 @@ func (t *SimpleChaincode) maturePapers(stub *shim.ChaincodeStub, args []string) 
 
 		remains := t.Sub(time.Now()).Hours()		
 		cp.Maturity = ((int)(remains)/12)
+
 			
 	// Write everything back
 	// cp
@@ -721,7 +729,7 @@ func (t *SimpleChaincode) maturePapers(stub *shim.ChaincodeStub, args []string) 
 	fmt.Println("Successfully completed Invoke")
 	return nil, nil
 }
-
+*/
 func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
 	//need one arg
 	if len(args) < 1 {
@@ -806,11 +814,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
     } else if function == "init" {
         fmt.Println("Firing init")
         return t.init(stub, args)
-    } else if function == "maturePapers" {
-		fmt.Println("Firing maturePapers")
-		return t.maturePapers(stub, args)
-	}
-
+    }
 	return nil, errors.New("Received unknown function invocation")
 }
 
