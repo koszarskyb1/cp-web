@@ -98,7 +98,6 @@ module.exports.process_msg = function (ws, data) {
                     console.log(util.format("Failed to submit chaincode invoke transaction: request=%j, error=%j", Request, err));
                 });
             }
-
             else if (data.type == 'chainstats') {
                 var options = {
                     host: peers[0],

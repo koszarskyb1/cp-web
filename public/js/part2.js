@@ -498,4 +498,3 @@ function excluded(entry, filter) {
     // Must be a valid trade if we reach this point
     return true;
 }
-

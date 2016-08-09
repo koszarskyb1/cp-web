@@ -84,7 +84,7 @@ type CP struct {
 	Qty       int     `json:"qty"`
 	Discount  float64 `json:"discount"`
 	Maturity  int     `json:"maturity"`
-	MaturDate time.Time  `json:"maturDate`
+	MaturDate string  `json:"maturDate`
 	Owners    []Owner `json:"owner"`
 	Issuer    string  `json:"issuer"`
 	IssueDate string  `json:"issueDate"`
@@ -308,8 +308,11 @@ func (t *SimpleChaincode) issueCommercialPaper(stub *shim.ChaincodeStub, args []
 	cp.CUSIP = account.Prefix + suffix
 
 	matTime, err := msToTime(cp.IssueDate)
+	if err != nil {
+		fmt.Println("Error converting time")
+		return nil, errors.New("Error converting time")
 	
-	cp.MaturDate = matTime.AddDate(0, 0, (cp.Maturity))
+	cp.MaturDate = matTime.AddDate(0, 0, (cp.Maturity)).String()
 
 	fmt.Println("Getting State on CP " + cp.CUSIP)
 	cpRxBytes, err := stub.GetState(cpPrefix+cp.CUSIP)
@@ -568,8 +571,10 @@ func (t *SimpleChaincode) transferPaper(stub *shim.ChaincodeStub, args []string)
 
 	//update maturity
 
-	remains := cp.MaturDate.Sub(time.Now())
-	cp.Maturity = (int)(remains.Hours())/12
+	t, err := msToTime(cp.MaturDate)
+
+		remains := t.Sub(time.Now()).Hours()		
+		cp.Maturity = ((int)(remains)/12)
 
 	// If fromCompany doesn't own this paper
 	if ownerFound == false {
