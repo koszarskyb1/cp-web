@@ -568,9 +568,9 @@ func (t *SimpleChaincode) transferPaper(stub *shim.ChaincodeStub, args []string)
 
 	//update maturity
 	
-			t, err := msToTime(cp.MaturDate)
+			clock, err := msToTime(cp.MaturDate)
 
-		remains := t.Sub(time.Now()).Hours()		
+		remains := clock.Sub(time.Now()).Hours()		
 		cp.Maturity = ((int)(remains)/12)
 
 	// If fromCompany doesn't own this paper

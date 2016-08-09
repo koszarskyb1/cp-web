@@ -149,7 +149,6 @@ $(document).on('ready', function () {
 
     //trade events
     $(document).on("click", ".buyPaper", function () {
-        ws.send(JSON.stringify({type: "maturePapers", v: 2, user: user.username}));
         if (user.username) {
             console.log('trading...');
             var i = $(this).attr('trade_pos');
@@ -225,7 +224,6 @@ function connect_to_server() {
         $("#errorNotificationPanel").fadeOut();
         ws.send(JSON.stringify({type: "chainstats", v: 2, user: user.username}));
         ws.send(JSON.stringify({type: "get_papers", v: 2, user: user.username}));
-        ws.send(JSON.stringify({type: "maturePapers", v: 2, user: user.username}));
         if (user.name && user.role !== "auditor") {
             ws.send(JSON.stringify({type: 'get_company', company: user.name, user: user.username}));
         }
