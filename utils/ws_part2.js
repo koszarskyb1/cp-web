@@ -98,6 +98,27 @@ module.exports.process_msg = function (ws, data) {
                     console.log(util.format("Failed to submit chaincode invoke transaction: request=%j, error=%j", Request, err));
                 });
             }
+            else if (data.type == 'update_paper') {
+                console.log('transfering msg', data.transfer);
+                Request.fcn = 'updatePaper';
+                Request.args = [JSON.stringify(data.transfer)];
+
+                var invokeTx = usr.invoke(Request);
+
+                // Print the invoke results
+                invokeTx.on('submitted', function (results) {
+                    // Invoke transaction submitted successfully
+                    console.log(util.format("Successfully submitted chaincode invoke transaction: request=%j, response=%j", Request, results));
+                });
+                invokeTx.on('complete', function (results) {
+                    // Invoke transaction submitted successfully
+                    console.log(util.format("Successfully completed chaincode invoke transaction: request=%j, response=%j", Request, results));
+                });
+                invokeTx.on('error', function (err) {
+                    // Invoke transaction submission failed
+                    console.log(util.format("Failed to submit chaincode invoke transaction: request=%j, error=%j", Request, err));
+                });
+            }
 
             else if (data.type == 'chainstats') {
                 var options = {

@@ -567,7 +567,7 @@ func (t *SimpleChaincode) transferPaper(stub *shim.ChaincodeStub, args []string)
 		matTime, err := time.Parse("2006-01-02 15:04:05.999999999 -0700 MST", cp.MatDate)
 
 		remaining := matTime.Sub(time.Now())
-		cp.Maturity = (int)(remaining.Hours())/12
+		cp.Maturity = ((int)(remaining.Hours())+6)/12      
 
 
 
@@ -671,7 +671,7 @@ func (t *SimpleChaincode) transferPaper(stub *shim.ChaincodeStub, args []string)
 }
 
 // Still working on this one
-/*func (t *SimpleChaincode) updatePaper(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
+func (t *SimpleChaincode) updatePaper(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
 	/*		0
 		json
 	  	{
@@ -680,7 +680,7 @@ func (t *SimpleChaincode) transferPaper(stub *shim.ChaincodeStub, args []string)
 			  "toCompany":"",
 			  "quantity": 1
 		}
-	
+		*/
 	//need one arg
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting commercial paper record")
@@ -712,8 +712,11 @@ func (t *SimpleChaincode) transferPaper(stub *shim.ChaincodeStub, args []string)
 
 	//update maturity
 
-	remains := cp.MaturDate.Sub(time.Now())
-	cp.Maturity = (int)(remains.Hours())/12
+	//update maturity
+		matTime, err := time.Parse("2006-01-02 15:04:05.999999999 -0700 MST", cp.MatDate)
+
+		remaining := matTime.Sub(time.Now())
+		cp.Maturity = ((int)(remaining.Hours())+6)/12   
 
 	
 	// cp
@@ -731,7 +734,7 @@ func (t *SimpleChaincode) transferPaper(stub *shim.ChaincodeStub, args []string)
 	
 	fmt.Println("Successfully completed Invoke")
 	return nil, nil
-} */
+} 
 
 /*
 func (t *SimpleChaincode) maturePapers(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
@@ -858,8 +861,11 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		//Create an asset with some value
 		return t.issueCommercialPaper(stub, args)
 	} else if function == "transferPaper" {
-		fmt.Println("Firing cretransferPaperateAccounts")
+		fmt.Println("Firing transferPaper")
 		return t.transferPaper(stub, args)
+	} else if function == "updatePaper" {
+		fmt.Println("Firing updatePaper")
+		return t.updatePaper(stub, args)
 	} else if function == "createAccounts" {
 		fmt.Println("Firing createAccounts")
 		return t.createAccounts(stub, args)
