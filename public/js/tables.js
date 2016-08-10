@@ -45,6 +45,34 @@ function buyButton(disabled, cusip, issuer) {
     return td;
 }
 
+/**
+ * Generates a buy button cell that users can click to purchase commercial paper.
+ * @param disabled True if the button should be disabled, false otherwise.
+ * @param cusip The cusip for the paper that this button is assigned to.
+ * @param issuer The issuer of the paper that this button is assigned to.
+ * @returns {Element} A table cell with a configured buy button.
+ */
+function updateButton(disabled, cusip, issuer) {
+    var button = document.createElement('button');
+    button.setAttribute('type', 'button');
+    button.setAttribute('data_cusip', cusip);
+    button.setAttribute('data_issuer', issuer);
+    button.classList.add('updatePaper');
+    button.classList.add('altButton');
+
+    var span = document.createElement('span');
+    span.classList.add('fa');
+    span.classList.add('fa-exchange');
+    span.innerHTML = ' &nbsp;&nbsp;Update';
+    button.appendChild(span);
+
+    // Wrap the buy button in a td like the other items in the row.
+    var td = document.createElement('td');
+    td.appendChild(button);
+
+    return td;
+}
+
 function paper_to_entries(paper) {
     var entries = [];
     for (var owner in paper.owner) {

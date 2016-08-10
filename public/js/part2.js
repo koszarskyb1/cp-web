@@ -147,6 +147,33 @@ $(document).on('ready', function () {
         }
     });
 
+// Update Papers
+        $(document).on("click", ".updatePaper", function () {
+        if (user.username) {
+            console.log('updating...');
+            var i = $(this).attr('trade_pos');
+            var cusip = $(this).attr('data_cusip');
+            var issuer = $(this).attr('data_issuer');
+
+            // TODO Map the trade_pos to the correct button
+            var msg = {
+                type: 'update_paper',
+                transfer: {
+                    //CUSIP: bag.papers[i].cusip,
+                    //fromCompany: bag.papers[i].issuer,
+                    CUSIP: cusip,
+                    fromCompany: issuer,
+                    toCompany: user.name,
+                    quantity: 1
+                },
+                user: user.username
+            };
+            console.log('sending', msg);
+            ws.send(JSON.stringify(msg));
+            $("#notificationPanel").animate({width: 'toggle'});
+        }
+    });
+
     //trade events
     $(document).on("click", ".buyPaper", function () {
         if (user.username) {
@@ -380,9 +407,11 @@ function build_trades(papers, panelDesc) {
                     // Only the trade panel should allow you to interact with trades
                     if (panelDesc.name === "trade") {
                         var disabled = false
+                        var updateButton = updateButton(disabled, entries[i].cusip, entries[i].issuer);
                         if (user.name.toLowerCase() === entries[i].owner.toLowerCase()) disabled = true;			//cannot buy my own stuff
                         if (entries[i].issuer.toLowerCase() !== entries[i].owner.toLowerCase()) disabled = true;
                         var button = buyButton(disabled, entries[i].cusip, entries[i].issuer);
+                        row.appendChild(updateButton);
                         row.appendChild(button);
                     }
                     rows.push(row);

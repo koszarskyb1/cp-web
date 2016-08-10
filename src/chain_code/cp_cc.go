@@ -1,18 +1,14 @@
 /*
 Copyright 2016 IBM
-
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
-
     http://www.apache.org/licenses/LICENSE-2.0
-
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
 Licensed Materials - Property of IBM
 © Copyright IBM Corp. 2016
 */
@@ -84,7 +80,7 @@ type CP struct {
 	Qty       int     `json:"qty"`
 	Discount  float64 `json:"discount"`
 	Maturity  int     `json:"maturity"`
-	MaturDate string  `json:"maturDate`
+	MaturDate time.Time  `json:"maturDate`
 	Owners    []Owner `json:"owner"`
 	Issuer    string  `json:"issuer"`
 	IssueDate string  `json:"issueDate"`
@@ -255,7 +251,6 @@ func (t *SimpleChaincode) issueCommercialPaper(stub *shim.ChaincodeStub, args []
 			],				
 			"issuer":"company2",
 			"issueDate":"1456161763790"  (current time in milliseconds as a string)
-
 		}
 	*/
 	//need one arg
@@ -308,11 +303,8 @@ func (t *SimpleChaincode) issueCommercialPaper(stub *shim.ChaincodeStub, args []
 	cp.CUSIP = account.Prefix + suffix
 
 	matTime, err := msToTime(cp.IssueDate)
-	if err != nil {
-		fmt.Println("Error converting time")
-		return nil, errors.New("Error converting time")
 	
-	cp.MaturDate = matTime.AddDate(0, 0, (cp.Maturity)).String()
+	cp.MaturDate = matTime.AddDate(0, 0, (cp.Maturity))
 
 	fmt.Println("Getting State on CP " + cp.CUSIP)
 	cpRxBytes, err := stub.GetState(cpPrefix+cp.CUSIP)
@@ -569,12 +561,6 @@ func (t *SimpleChaincode) transferPaper(stub *shim.ChaincodeStub, args []string)
 		}
 	}
 
-	//update maturity
-
-	t, err := msToTime(cp.MaturDate)
-
-		remains := t.Sub(time.Now()).Hours()		
-		cp.Maturity = ((int)(remains)/12)
 
 	// If fromCompany doesn't own this paper
 	if ownerFound == false {
@@ -675,9 +661,71 @@ func (t *SimpleChaincode) transferPaper(stub *shim.ChaincodeStub, args []string)
 	return nil, nil
 }
 
+// Still working on this one
+func (t *SimpleChaincode) updatePaper(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
+	/*		0
+		json
+	  	{
+			  "CUSIP": "",
+			  "fromCompany":"",
+			  "toCompany":"",
+			  "quantity": 1
+		}
+	*/
+	//need one arg
+	if len(args) != 1 {
+		return nil, errors.New("Incorrect number of arguments. Expecting commercial paper record")
+	}
+	
+	var tr Transaction
+
+	fmt.Println("Unmarshalling Transaction")
+	err := json.Unmarshal([]byte(args[0]), &tr)
+	if err != nil {
+		fmt.Println("Error Unmarshalling Transaction")
+		return nil, errors.New("Invalid commercial paper issue")
+	}
+
+	fmt.Println("Getting State on CP " + tr.CUSIP)
+	cpBytes, err := stub.GetState(cpPrefix+tr.CUSIP)
+	if err != nil {
+		fmt.Println("CUSIP not found")
+		return nil, errors.New("CUSIP not found " + tr.CUSIP)
+	}
+
+	var cp CP
+	fmt.Println("Unmarshalling CP " + tr.CUSIP)
+	err = json.Unmarshal(cpBytes, &cp)
+	if err != nil {
+		fmt.Println("Error unmarshalling cp " + tr.CUSIP)
+		return nil, errors.New("Error unmarshalling cp " + tr.CUSIP)
+	}
+
+	//update maturity
+
+	remains := cp.MaturDate.Sub(time.Now())
+	cp.Maturity = (int)(remains.Hours())/12
+
+	
+	// cp
+	cpBytesToWrite, err := json.Marshal(&cp)
+	if err != nil {
+		fmt.Println("Error marshalling the cp")
+		return nil, errors.New("Error marshalling the cp")
+	}
+	fmt.Println("Put state on CP")
+	err = stub.PutState(cpPrefix+tr.CUSIP, cpBytesToWrite)
+	if err != nil {
+		fmt.Println("Error writing the cp back")
+		return nil, errors.New("Error writing the cp back")
+	}
+	
+	fmt.Println("Successfully completed Invoke")
+	return nil, nil
+}
+
 /*
 func (t *SimpleChaincode) maturePapers(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
-
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting commercial paper record")
 	}
@@ -706,12 +754,9 @@ func (t *SimpleChaincode) maturePapers(stub *shim.ChaincodeStub, args []string) 
 			fmt.Println("Error retrieving cp " + value)
 			return nil, errors.New("Error retrieving cp " + value)
 		}
-
 		t, err := msToTime(cp.MaturDate)
-
 		remains := t.Sub(time.Now()).Hours()		
 		cp.Maturity = ((int)(remains)/12)
-
 			
 	// Write everything back
 	// cp
@@ -726,9 +771,7 @@ func (t *SimpleChaincode) maturePapers(stub *shim.ChaincodeStub, args []string) 
 		fmt.Println("Error writing the cp back")
 		return nil, errors.New("Error writing the cp back")
 	}
-
 	}
-
 	fmt.Println("Successfully completed Invoke")
 	return nil, nil
 }
