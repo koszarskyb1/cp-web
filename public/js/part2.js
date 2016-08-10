@@ -69,6 +69,7 @@ $(document).on('ready', function () {
                     qty: Number($("select[name='qty']").val()),
                     discount: Number($("select[name='discount']").val()),
                     maturity: Number($("select[name='maturity']").val()),
+                    origMat: Number($("select[name='maturity']").val()),
                     owner: [],
                     issuer: user.name,
                     issueDate: Date.now().toString()

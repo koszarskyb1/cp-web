@@ -80,7 +80,7 @@ type CP struct {
 	Qty       int     `json:"qty"`
 	Discount  float64 `json:"discount"`
 	Maturity  int     `json:"maturity"`
-	MaturDate time.Time  `json:"maturDate`
+	OrigMat	  int	  `json:"origMat"`
 	Owners    []Owner `json:"owner"`
 	Issuer    string  `json:"issuer"`
 	IssueDate string  `json:"issueDate"`
@@ -302,10 +302,7 @@ func (t *SimpleChaincode) issueCommercialPaper(stub *shim.ChaincodeStub, args []
 	fmt.Println("Marshalling CP bytes")
 	cp.CUSIP = account.Prefix + suffix
 
-	matTime, err := msToTime(cp.IssueDate)
 	
-	cp.MaturDate = matTime.AddDate(0, 0, (cp.Maturity))
-
 	fmt.Println("Getting State on CP " + cp.CUSIP)
 	cpRxBytes, err := stub.GetState(cpPrefix+cp.CUSIP)
 	if cpRxBytes == nil {
@@ -563,9 +560,8 @@ func (t *SimpleChaincode) transferPaper(stub *shim.ChaincodeStub, args []string)
 
 		//update maturity
 
-	remains := cp.MaturDate.Sub(time.Now())
-	fmt.Println(cp.MaturDate + remains)
-	cp.Maturity = (int)(remains.Hours())/12
+	passed := cp.IssueDate.Sub(time.Now())
+	cp.Maturity = cp.OrigMat-(int)(passed.Hours())/12
 
 
 
