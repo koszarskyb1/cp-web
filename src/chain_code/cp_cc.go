@@ -80,7 +80,7 @@ type CP struct {
 	Qty       int     `json:"qty"`
 	Discount  float64 `json:"discount"`
 	Maturity  int     `json:"maturity"`
-	OrigMat	  int	  `json:"origMat"`
+	MatDate	  string  `json:"matDate"`
 	Owners    []Owner `json:"owner"`
 	Issuer    string  `json:"issuer"`
 	IssueDate string  `json:"issueDate"`
@@ -290,6 +290,11 @@ func (t *SimpleChaincode) issueCommercialPaper(stub *shim.ChaincodeStub, args []
 	var owner Owner
 	owner.Company = cp.Issuer
 	owner.Quantity = cp.Qty
+
+	matTime, err := msToTime(cp.IssueDate)
+
+	cp.MatDate = matTime.AddDate(0,0,cp.Maturity).String()
+
 	
 	cp.Owners = append(cp.Owners, owner)
 
@@ -559,9 +564,10 @@ func (t *SimpleChaincode) transferPaper(stub *shim.ChaincodeStub, args []string)
 	}
 
 		//update maturity
+		matTime, err := time.Parse("2006-01-02 15:04:05.999999999 -0700 MST", cp.MatDate)
 
-	passed := cp.IssueDate.Sub(time.Now())
-	cp.Maturity = cp.OrigMat-(int)(passed.Hours())/12
+		remaining := matTime.Sub(time.Now())
+		cp.Maturity = (int)(remaining.Hours())/12
 
 
 
