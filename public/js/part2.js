@@ -407,11 +407,11 @@ function build_trades(papers, panelDesc) {
                     // Only the trade panel should allow you to interact with trades
                     if (panelDesc.name === "trade") {
                         var disabled = false
-                        var updateButton = updateButton(disabled, entries[i].cusip, entries[i].issuer);
+                      //  var updateButton = updateButton(disabled, entries[i].cusip, entries[i].issuer);
                         if (user.name.toLowerCase() === entries[i].owner.toLowerCase()) disabled = true;			//cannot buy my own stuff
                         if (entries[i].issuer.toLowerCase() !== entries[i].owner.toLowerCase()) disabled = true;
                         var button = buyButton(disabled, entries[i].cusip, entries[i].issuer);
-                        row.appendChild(updateButton);
+                      //  row.appendChild(updateButton);
                         row.appendChild(button);
                     }
                     rows.push(row);
