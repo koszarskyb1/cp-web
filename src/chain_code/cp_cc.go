@@ -670,124 +670,6 @@ func (t *SimpleChaincode) transferPaper(stub *shim.ChaincodeStub, args []string)
 	return nil, nil
 }
 
-// Still working on this one
-func (t *SimpleChaincode) updatePaper(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
-	/*		0
-		json
-	  	{
-			  "CUSIP": "",
-			  "fromCompany":"",
-			  "toCompany":"",
-			  "quantity": 1
-		}
-		*/
-	//need one arg
-	if len(args) != 1 {
-		return nil, errors.New("Incorrect number of arguments. Expecting commercial paper record")
-	}
-	
-	var tr Transaction
-
-	fmt.Println("Unmarshalling Transaction")
-	err := json.Unmarshal([]byte(args[0]), &tr)
-	if err != nil {
-		fmt.Println("Error Unmarshalling Transaction")
-		return nil, errors.New("Invalid commercial paper issue")
-	}
-
-	fmt.Println("Getting State on CP " + tr.CUSIP)
-	cpBytes, err := stub.GetState(cpPrefix+tr.CUSIP)
-	if err != nil {
-		fmt.Println("CUSIP not found")
-		return nil, errors.New("CUSIP not found " + tr.CUSIP)
-	}
-
-	var cp CP
-	fmt.Println("Unmarshalling CP " + tr.CUSIP)
-	err = json.Unmarshal(cpBytes, &cp)
-	if err != nil {
-		fmt.Println("Error unmarshalling cp " + tr.CUSIP)
-		return nil, errors.New("Error unmarshalling cp " + tr.CUSIP)
-	}
-
-	//update maturity
-
-	//update maturity
-		matTime, err := time.Parse("2006-01-02 15:04:05.999999999 -0700 MST", cp.MatDate)
-
-		remaining := matTime.Sub(time.Now())
-		cp.Maturity = ((int)(remaining.Hours())+6)/12   
-
-	
-	// cp
-	cpBytesToWrite, err := json.Marshal(&cp)
-	if err != nil {
-		fmt.Println("Error marshalling the cp")
-		return nil, errors.New("Error marshalling the cp")
-	}
-	fmt.Println("Put state on CP")
-	err = stub.PutState(cpPrefix+tr.CUSIP, cpBytesToWrite)
-	if err != nil {
-		fmt.Println("Error writing the cp back")
-		return nil, errors.New("Error writing the cp back")
-	}
-	
-	fmt.Println("Successfully completed Invoke")
-	return nil, nil
-} 
-
-/*
-func (t *SimpleChaincode) maturePapers(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
-	if len(args) != 1 {
-		return nil, errors.New("Incorrect number of arguments. Expecting commercial paper record")
-	}
-	
-	// Get list of all the keys
-	keysBytes, err := stub.GetState("PaperKeys")
-	if err != nil {
-		fmt.Println("Error retrieving paper keys")
-		return nil, errors.New("Error retrieving paper keys")
-	}
-	var keys []string
-	err = json.Unmarshal(keysBytes, &keys)
-	if err != nil {
-		fmt.Println("Error unmarshalling paper keys")
-		return nil, errors.New("Error unmarshalling paper keys")
-	}
-	
-	// Get all the cps
-	for _, value := range keys {
-		cpBytes, err := stub.GetState(value)
-		
-		var cp CP
-		
-		err = json.Unmarshal(cpBytes, &cp)
-		if err != nil {
-			fmt.Println("Error retrieving cp " + value)
-			return nil, errors.New("Error retrieving cp " + value)
-		}
-		t, err := msToTime(cp.MaturDate)
-		remains := t.Sub(time.Now()).Hours()		
-		cp.Maturity = ((int)(remains)/12)
-			
-	// Write everything back
-	// cp
-	cpBytesToWrite, err := json.Marshal(&cp)
-	if err != nil {
-		fmt.Println("Error marshalling the cp")
-		return nil, errors.New("Error marshalling the cp")
-	}
-	fmt.Println("Put state on CP")
-	err = stub.PutState(cpPrefix+cp.CUSIP, cpBytesToWrite)
-	if err != nil {
-		fmt.Println("Error writing the cp back")
-		return nil, errors.New("Error writing the cp back")
-	}
-	}
-	fmt.Println("Successfully completed Invoke")
-	return nil, nil
-}
-*/
 func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
 	//need one arg
 	if len(args) < 1 {
@@ -863,9 +745,6 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 	} else if function == "transferPaper" {
 		fmt.Println("Firing transferPaper")
 		return t.transferPaper(stub, args)
-	} else if function == "updatePaper" {
-		fmt.Println("Firing updatePaper")
-		return t.updatePaper(stub, args)
 	} else if function == "createAccounts" {
 		fmt.Println("Firing createAccounts")
 		return t.createAccounts(stub, args)
