@@ -399,7 +399,6 @@ function build_trades(papers, panelDesc) {
                         entries[i].quantity,
                         entries[i].discount,
                         entries[i].maturity,
-                        entries[i].forSale,
                         entries[i].issuer,
                         entries[i].owner
                     ];
