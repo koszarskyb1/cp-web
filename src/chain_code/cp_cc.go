@@ -665,7 +665,7 @@ func (t *SimpleChaincode) transferPaper(stub *shim.ChaincodeStub, args []string)
 }
 
 // Still working on this one
-func (t *SimpleChaincode) updatePaper(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
+/*func (t *SimpleChaincode) updatePaper(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
 	/*		0
 		json
 	  	{
@@ -674,7 +674,7 @@ func (t *SimpleChaincode) updatePaper(stub *shim.ChaincodeStub, args []string) (
 			  "toCompany":"",
 			  "quantity": 1
 		}
-	*/
+	
 	//need one arg
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting commercial paper record")
@@ -725,7 +725,7 @@ func (t *SimpleChaincode) updatePaper(stub *shim.ChaincodeStub, args []string) (
 	
 	fmt.Println("Successfully completed Invoke")
 	return nil, nil
-}
+} */
 
 /*
 func (t *SimpleChaincode) maturePapers(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
