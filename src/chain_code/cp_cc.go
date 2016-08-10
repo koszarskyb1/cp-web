@@ -612,8 +612,12 @@ func (t *SimpleChaincode) transferPaper(stub *shim.ChaincodeStub, args []string)
 	fromCompany.CashBalance += amountToBeTransferred
 
 	//update sale status
-	if cp.ForSale == true {cp.ForSale = false}
-	else {cp.ForSale = true}
+	if cp.ForSale == true 
+	{
+		cp.ForSale = false
+	} else {
+		cp.ForSale = true
+	}
 
 	toOwnerFound := false
 	for key, owner := range cp.Owners {
