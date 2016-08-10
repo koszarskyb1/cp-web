@@ -81,6 +81,7 @@ type CP struct {
 	Discount  float64 `json:"discount"`
 	Maturity  int     `json:"maturity"`
 	MatDate	  string  `json:"matDate"`
+	ForSale	  bool    `josn:"forSale"`
 	Owners    []Owner `json:"owner"`
 	Issuer    string  `json:"issuer"`
 	IssueDate string  `json:"issueDate"`
@@ -291,9 +292,12 @@ func (t *SimpleChaincode) issueCommercialPaper(stub *shim.ChaincodeStub, args []
 	owner.Company = cp.Issuer
 	owner.Quantity = cp.Qty
 
+//Maturity
 	matTime, err := msToTime(cp.IssueDate)
-
 	cp.MatDate = matTime.AddDate(0,0,cp.Maturity).String()
+
+//forSale
+	cp.ForSale = true
 
 	
 	cp.Owners = append(cp.Owners, owner)
@@ -569,7 +573,13 @@ func (t *SimpleChaincode) transferPaper(stub *shim.ChaincodeStub, args []string)
 		remaining := matTime.Sub(time.Now())
 		cp.Maturity = ((int)(remaining.Hours())+6)/12      
 
-
+	// If not forSale
+	if cp.ForSale == false {
+		fmt.Println("This paper is not for sale")
+		return nil, errors.New("This paper is not for sale")	
+	} else {
+		fmt.Println("This paper is for sale")
+	}
 
 	// If fromCompany doesn't own this paper
 	if ownerFound == false {
@@ -600,6 +610,10 @@ func (t *SimpleChaincode) transferPaper(stub *shim.ChaincodeStub, args []string)
 	
 	toCompany.CashBalance -= amountToBeTransferred
 	fromCompany.CashBalance += amountToBeTransferred
+
+	//update sale status
+	if cp.ForSale == true {cp.ForSale = false}
+	else {cp.ForSale = true}
 
 	toOwnerFound := false
 	for key, owner := range cp.Owners {

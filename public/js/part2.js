@@ -155,16 +155,16 @@ $(document).on('ready', function () {
             console.log('trading...');
             var i = $(this).attr('trade_pos');
             var cusip = $(this).attr('data_cusip');
-            var issuer = $(this).attr('data_issuer');
+            var owner = $(this).attr('data_owner');
 
             // TODO Map the trade_pos to the correct button
             var msg = {
                 type: 'transfer_paper',
                 transfer: {
                     //CUSIP: bag.papers[i].cusip,
-                    //fromCompany: bag.papers[i].issuer,
+                    //fromCompany: bag.papers[i].owner,
                     CUSIP: cusip,
-                    fromCompany: issuer,
+                    fromCompany: owner,
                     toCompany: user.name,
                     quantity: 1
                 },
@@ -177,21 +177,21 @@ $(document).on('ready', function () {
     });
 
     //sell papers
-    /*$(document).on("click", ".buyPaper", function () {
+    $(document).on("click", ".sellPaper", function () {
         if (user.username) {
             console.log('trading...');
             var i = $(this).attr('trade_pos');
             var cusip = $(this).attr('data_cusip');
-            var issuer = $(this).attr('data_issuer');
+            var owner = $(this).attr('data_owner');
 
             // TODO Map the trade_pos to the correct button
             var msg = {
                 type: 'transfer_paper',
                 transfer: {
                     //CUSIP: bag.papers[i].cusip,
-                    //fromCompany: bag.papers[i].issuer,
+                    //fromCompany: bag.papers[i].owner,
                     CUSIP: cusip,
-                    fromCompany: issuer,
+                    fromCompany: owner,
                     toCompany: user.name,
                     quantity: 1
                 },
@@ -201,7 +201,7 @@ $(document).on('ready', function () {
             ws.send(JSON.stringify(msg));
             $("#notificationPanel").animate({width: 'toggle'});
         }
-    }); */
+    }); 
 });
 
 
@@ -399,6 +399,7 @@ function build_trades(papers, panelDesc) {
                         entries[i].quantity,
                         entries[i].discount,
                         entries[i].maturity,
+                        entries[i].forSale,
                         entries[i].issuer,
                         entries[i].owner
                     ];
@@ -409,9 +410,20 @@ function build_trades(papers, panelDesc) {
                     // Only the trade panel should allow you to interact with trades
                     if (panelDesc.name === "trade") {
                         var disabled = false
-                        if (user.name.toLowerCase() === entries[i].owner.toLowerCase()) disabled = true;			//cannot buy my own stuff
-                        if (entries[i].issuer.toLowerCase() !== entries[i].owner.toLowerCase()) disabled = true;
-                        var button = buyButton(disabled, entries[i].cusip, entries[i].issuer);
+                        if (user.name.toLowerCase() === entries[i].owner.toLowerCase() && entries[i].forSale === true ) 
+                        {
+                            disabled = true;
+                            var button = sellButton(disabled, entries[i].cusip, entries[i].owner)
+                        }	
+                        else if (user.name.toLowerCase() === entries[i].owner.toLowerCase() && entries[i].forSale === false )
+                        {
+                            var button = sellButton(disabled, entries[i].cusip, entries[i].owner)
+                        }
+                        else if (user.name.toLowerCase() !== entries[i].owner.toLowerCase() && entries[i].forSale === true )
+                        {
+                            var button = buyButton(disabled, entries[i].cusip, entries[i].owner)
+                        } else
+                        var button = buyButton(disabled, entries[i].cusip, entries[i].owner);
                         row.appendChild(button);
                     }
                     rows.push(row);
