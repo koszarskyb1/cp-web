@@ -20,14 +20,14 @@ function createRow(data) {
  * Generates a buy button cell that users can click to purchase commercial paper.
  * @param disabled True if the button should be disabled, false otherwise.
  * @param cusip The cusip for the paper that this button is assigned to.
- * @param issuer The issuer of the paper that this button is assigned to.
+ * @param owner The issuer of the paper that this button is assigned to.
  * @returns {Element} A table cell with a configured buy button.
  */
-function buyButton(disabled, cusip, issuer) {
+function buyButton(disabled, cusip, owner) {
     var button = document.createElement('button');
     button.setAttribute('type', 'button');
     button.setAttribute('data_cusip', cusip);
-    button.setAttribute('data_issuer', issuer);
+    button.setAttribute('data_owner', owner);
     if(disabled) button.disabled = true;
     button.classList.add('buyPaper');
     button.classList.add('altButton');
@@ -36,6 +36,35 @@ function buyButton(disabled, cusip, issuer) {
     span.classList.add('fa');
     span.classList.add('fa-exchange');
     span.innerHTML = ' &nbsp;&nbsp;BUY 1';
+    button.appendChild(span);
+
+    // Wrap the buy button in a td like the other items in the row.
+    var td = document.createElement('td');
+    td.appendChild(button);
+
+    return td;
+}
+
+/**
+ * Generates a buy button cell that users can click to purchase commercial paper.
+ * @param disabled True if the button should be disabled, false otherwise.
+ * @param cusip The cusip for the paper that this button is assigned to.
+ * @param owner The issuer of the paper that this button is assigned to.
+ * @returns {Element} A table cell with a configured buy button.
+ */
+function sellButton(disabled, cusip, owner) {
+    var button = document.createElement('button');
+    button.setAttribute('type', 'button');
+    button.setAttribute('data_cusip', cusip);
+    button.setAttribute('data_owner', owner);
+    if(disabled) button.disabled = true;
+    button.classList.add('sellPaper');
+    button.classList.add('altButton');
+
+    var span = document.createElement('span');
+    span.classList.add('fa');
+    span.classList.add('fa-exchange');
+    span.innerHTML = ' &nbsp;&nbsp;Sell';
     button.appendChild(span);
 
     // Wrap the buy button in a td like the other items in the row.
