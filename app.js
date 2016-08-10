@@ -221,7 +221,7 @@ if (process.env.VCAP_SERVICES) {
 
 var pwd = "";
 for (var z in users) {
-    if (users[z].username == "admin") {
+    if (users[z].username == "WebAppAdmin") {
         pwd = users[z].secret;
     }
 }
