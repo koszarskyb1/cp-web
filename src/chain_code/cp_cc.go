@@ -564,6 +564,7 @@ func (t *SimpleChaincode) transferPaper(stub *shim.ChaincodeStub, args []string)
 		//update maturity
 
 	remains := cp.MaturDate.Sub(time.Now())
+	fmt.Println(cp.MaturDate + remains)
 	cp.Maturity = (int)(remains.Hours())/12
 
 
