@@ -86,7 +86,6 @@ function paper_to_entries(paper) {
             quantity: paper.owner[owner].quantity,
             discount: paper.discount,
             maturity: paper.maturity,
-            forSale:  paper.forSale,
             issuer: paper.issuer,
             owner: paper.owner[owner].company
 
