@@ -69,7 +69,7 @@ $(document).on('ready', function () {
                     qty: Number($("select[name='qty']").val()),
                     discount: Number($("select[name='discount']").val()),
                     maturity: Number($("select[name='maturity']").val()),
-                    origMat: Number($("select[name='maturity']").val()),
+                    matDate: Date.now().toString(),
                     owner: [],
                     issuer: user.name,
                     issueDate: Date.now().toString()
@@ -381,11 +381,11 @@ function build_trades(papers, panelDesc) {
                     var style;
                     if (user.name.toLowerCase() === entries[i].owner.toLowerCase()) {
                         //cannot buy my own stuff
-                        style = 'invalid';
+                        style = null;
                     }
                     else if (entries[i].issuer.toLowerCase() !== entries[i].owner.toLowerCase()) {
                         //cannot buy stuff already bought
-                        style = 'invalid';
+                        style = null;
                     } else {
                         style = null;
                     }
@@ -410,7 +410,7 @@ function build_trades(papers, panelDesc) {
                     if (panelDesc.name === "trade") {
                         var disabled = false
                             var button = buyButton(disabled, entries[i].cusip, entries[i].owner)
-                            if (user.name.toLowerCase() === entries[i].owner.toLowerCase()) button =  sellButton(disabled, entries[i].cusip, entries[i].owner);
+                            if (user.name.toLowerCase() === entries[i].owner.toLowerCase()) button = sellButton(disabled, entries[i].cusip, entries[i].owner);
                         }
                         row.appendChild(button);
                     }
