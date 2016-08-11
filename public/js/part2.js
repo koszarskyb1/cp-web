@@ -411,13 +411,12 @@ function build_trades(papers, panelDesc) {
                         var disabled = false
                         if (user.name.toLowerCase() === entries[i].owner.toLowerCase()) 
                         {
-                            
+                    
                             var button = sellButton(disabled, entries[i].cusip, entries[i].owner)
-                        }	
-                        else if (user.name.toLowerCase() !== entries[i].owner.toLowerCase()
+                        } else
                         {
                             var button = buyButton(disabled, entries[i].cusip, entries[i].owner)
-                        } 
+                        }
                         row.appendChild(button);
                     }
                     rows.push(row);
