@@ -483,7 +483,6 @@ var names = [
     "qty",
     "discount",
     "maturity",
-    "forSale",
     "issuer",
     "owner",
     "company"
