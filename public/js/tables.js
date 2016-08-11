@@ -52,7 +52,7 @@ function buyButton(disabled, cusip, owner) {
  * @param owner The issuer of the paper that this button is assigned to.
  * @returns {Element} A table cell with a configured buy button.
  */
-function sellButton(disabled, cusip, owner) {
+/*function sellButton(disabled, cusip, owner) {
     var button = document.createElement('button');
     button.setAttribute('type', 'button');
     button.setAttribute('data_cusip', cusip);
@@ -72,7 +72,7 @@ function sellButton(disabled, cusip, owner) {
     td.appendChild(button);
 
     return td;
-}
+} */
 
 function paper_to_entries(paper) {
     var entries = [];
@@ -86,7 +86,7 @@ function paper_to_entries(paper) {
             quantity: paper.owner[owner].quantity,
             discount: paper.discount,
             maturity: paper.maturity,
-            forSale:  paper.forSale,
+         //   forSale:  paper.forSale,
             issuer: paper.issuer,
             owner: paper.owner[owner].company
 

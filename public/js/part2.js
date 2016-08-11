@@ -408,21 +408,22 @@ function build_trades(papers, panelDesc) {
                     // Only the trade panel should allow you to interact with trades
                     if (panelDesc.name === "trade") {
                         var disabled = false
-                        if (user.name.toLowerCase() === entries[i].owner.toLowerCase() && (entries[i].forSale.toLowerCase() === "yes")) 
+                        if (user.name.toLowerCase() === entries[i].owner.toLowerCase() /* && (entries[i].forSale.toLowerCase() === "yes")*/) 
                         {
                             disabled = true;
-                            var button = sellButton(disabled, entries[i].cusip, entries[i].owner)
-                        }	
-                        else if (user.name.toLowerCase() === entries[i].owner.toLowerCase() && (entries[i].forSale.toLowerCase() === "no"))
-                        {
-                            var button = sellButton(disabled, entries[i].cusip, entries[i].owner)
                         }
-                        else if (user.name.toLowerCase() !== entries[i].owner.toLowerCase() && (entries[i].forSale.toLowerCase() === "yes"))
-                        {
-                            var button = buyButton(disabled, entries[i].cusip, entries[i].owner)
-                        } else
-                        {
-                            disabled = true
+                           // var button = sellButton(disabled, entries[i].cusip, entries[i].owner)
+                     //   }	
+                       // else if (user.name.toLowerCase() === entries[i].owner.toLowerCase() && (entries[i].forSale.toLowerCase() === "no"))
+                       //{
+                        //    var button = sellButton(disabled, entries[i].cusip, entries[i].owner)
+                       // }
+                       // else if (user.name.toLowerCase() !== entries[i].owner.toLowerCase() && (entries[i].forSale.toLowerCase() === "yes"))
+                       // {
+                          //  var button = buyButton(disabled, entries[i].cusip, entries[i].owner)
+                       // } else
+                       // {
+                        //    disabled = true
                             var button = buyButton(disabled, entries[i].cusip, entries[i].owner)
                         }
                         row.appendChild(button);
