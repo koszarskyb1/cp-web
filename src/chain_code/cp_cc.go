@@ -81,7 +81,7 @@ type CP struct {
 	Discount  float64 `json:"discount"`
 	Maturity  int     `json:"maturity"`
 	MatDate	  string  `json:"matDate"`
-	ForSale	  string    `josn:"forSale"`
+	ForSale	  string  `josn:"forSale"`
 	Owners    []Owner `json:"owner"`
 	Issuer    string  `json:"issuer"`
 	IssueDate string  `json:"issueDate"`

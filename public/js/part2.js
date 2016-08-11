@@ -409,7 +409,21 @@ function build_trades(papers, panelDesc) {
                     // Only the trade panel should allow you to interact with trades
                     if (panelDesc.name === "trade") {
                         var disabled = false
-                        if user.name.toLowerCase() === entries[i].owner.toLowerCase() disabled = true;
+                        if (user.name.toLowerCase() === entries[i].owner.toLowerCase() && (entries[i].forSale == "yes")) 
+                        {
+                            disabled = true;
+                            var button = sellButton(disabled, entries[i].cusip, entries[i].owner)
+                        }	
+                        else if (user.name.toLowerCase() === entries[i].owner.toLowerCase() && (entries[i].forSale == "no"))
+                        {
+                            var button = sellButton(disabled, entries[i].cusip, entries[i].owner)
+                        }
+                        else if (user.name.toLowerCase() !== entries[i].owner.toLowerCase() && (entries[i].forSale == "yes"))
+                        {
+                            var button = buyButton(disabled, entries[i].cusip, entries[i].owner)
+                        } else
+                        {
+                            disabled = true
                             var button = buyButton(disabled, entries[i].cusip, entries[i].owner)
                         }
                         row.appendChild(button);

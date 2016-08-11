@@ -221,7 +221,7 @@ if (process.env.VCAP_SERVICES) {
 
 var pwd = "";
 for (var z in users) {
-    if (users[z].username == "WebAppAdmin") {
+    if (users[z].username == "admin") {
         pwd = users[z].secret;
     }
 }
@@ -245,7 +245,7 @@ function configure_network() {
         chain.addPeer(peerURLs[i], { pem: pem });
     }
 
-    chain.getMember("WebAppAdmin", function (err, WebAppAdmin) {
+    chain.getMember("admin", function (err, WebAppAdmin) {
         if (err) {
             console.log("Failed to get WebAppAdmin member " + " ---> " + err);
         } else {
