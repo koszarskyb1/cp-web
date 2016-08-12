@@ -407,7 +407,7 @@ function build_trades(papers, panelDesc) {
                     style && row.classList.add(style);
 
                     // Only the trade panel should allow you to interact with trades
-                    if (panelDesc.name === "trade") {
+                    if (panelDesc.name === "trade") {   //Not yet setup with Resale function. Requires reading of forSale from Chiancode
                         var disabled = false
                             var button = buyButton(disabled, entries[i].cusip, entries[i].owner)
                             if (user.name.toLowerCase() === entries[i].owner.toLowerCase()) button = sellButton(disabled, entries[i].cusip, entries[i].owner);
